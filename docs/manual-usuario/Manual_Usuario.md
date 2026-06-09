@@ -32,12 +32,23 @@ Para resguardar la seguridad de la plataforma y de los perfiles de los profesion
 
 ![Restricción de Inicio Sesión Obligatorio](../vista/obliga_iniciar.png)
 
+---
+
+## 2. Gestión de Accesos y Autenticación (CU-01)
+
+### 2.1 Restricción de Navegación Anónima
+Para resguardar la seguridad de la plataforma y de los perfiles de los profesionales, el sistema cuenta con un control de acceso perimetral. Si un usuario intenta saltarse el flujo asíncrono o acceder directamente a la visualización detallada de los trabajadores sin haberse autenticado, el sistema interceptará la petición y desplegará una alerta restrictiva.
+
+![Restricción de Inicio Sesión Obligatorio](../vista/obliga_iniciar.png)
+
 ### 2.2 Registro de Nuevos Usuarios
 Si no dispone de una cuenta activa para levantar las restricciones de visualización, puede registrarse completando el formulario con sus datos personales obligatorios: Nombre, Apellido, Correo Electrónico, Contraseña y Cédula de Identidad (C.I.).
 
 ![Formulario de Registro](../manual-usuario/capturas/registro.png)
 
-> **Nota de Seguridad:** El sistema valida la unicidad de las credenciales. Si el número de cédula o el correo electrónico ya se encuentran registrados en `db.sqlite`, la aplicación denegará el registro para evitar duplicidades de identidad.
+> **Nota de Seguridad y Unicidad de Datos:** El sistema valida rigurosamente las restricciones lógicas en el Backend antes de impactar la base de datos `db.sqlite`. Si un ciudadano intenta registrarse utilizando un número de Cédula de Identidad o un Correo Electrónico que ya existen en el sistema, la aplicación abortará la transacción y emitirá una alerta de bloqueo preventivo.
+
+![Evidencia de Cédula ya Registrada](../evidencias/datos_registrados.png)
 
 ### 2.3 Inicio de Sesión
 Para validar su identidad, levantar los bloqueos lógicos de búsqueda y acceder al panel de configuración, introduzca sus credenciales en el formulario de login.
