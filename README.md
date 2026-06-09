@@ -56,11 +56,13 @@ Siga la siguiente secuencia de comandos en la terminal de la línea de comandos 
 ```bash
 git clone [https://github.com/tu-usuario/tu-repositorio.git](https://github.com/tu-usuario/tu-repositorio.git)
 cd tu-repositorio
+```
 ### Paso 2: Instalar las dependencias declaradas
 Este comando descarga e instala de forma automatizada los módulos del backend (Express, SQLite3, Bcrypt para hashing de contraseñas, entre otros) especificados en el archivo `package.json`:
 
 ```bash
 npm install
+```
 ### Paso 3: Inicialización de la Base de Datos
 Asegúrese de que el archivo `db.sqlite` se genere correctamente en el directorio correspondiente ejecutando el script de inicialización o levantando la aplicación por primera vez, lo cual creará de forma automática las tablas estructuradas a partir del esquema lógico (`schema.sql`).
 
@@ -69,6 +71,7 @@ Inicie el servidor local de Node.js para escuchar peticiones entrantes:
 
 ```bash
 npm start
+```
 Una vez levantado el servicio, acceda a la plataforma desde cualquier navegador web utilizando la dirección URL local predeterminada: `http://localhost:3000`.
 
 ---
