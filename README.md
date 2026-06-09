@@ -35,6 +35,8 @@ La organización del código fuente en el repositorio refleja fielmente las capa
 ├── .gitignore            # Directiva de exclusión de archivos temporales, módulos y persistencia real.
 ├── app.js                # Punto de entrada principal y configuración inicial del servidor Node.js.
 └── package.json          # Manifiesto del proyecto, metadatos y declaración de dependencias.
+```
+---
 
 ## 3. Requisitos del Sistema
 
