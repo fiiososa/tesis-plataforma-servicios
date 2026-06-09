@@ -30,4 +30,4 @@ Si no dispone de una cuenta, puede registrarse completando el formulario con sus
 ### 3.1 Vista del Profesional
 Una vez autenticado, el profesional cuenta con un perfil público donde se muestran sus datos de contacto, especialidad y los servicios ofertados para la comunidad de Colonias Unidas.
 
-![Perfil Profesional](capturas/panel_profesional.png)
+![Perfil Profesional](capturas/perfil.png)
