@@ -35,3 +35,47 @@ La organización del código fuente en el repositorio refleja fielmente las capa
 ├── .gitignore            # Directiva de exclusión de archivos temporales, módulos y persistencia real.
 ├── app.js                # Punto de entrada principal y configuración inicial del servidor Node.js.
 └── package.json          # Manifiesto del proyecto, metadatos y declaración de dependencias.
+
+## 3. Requisitos del Sistema
+
+Para el despliegue local o en servidor de la plataforma, se requieren los siguientes componentes de software:
+
+* **Runtime:** Node.js (Versión 18.x LTS o superior recomendada).
+* **Gestor de Paquetes:** npm (Incluido nativamente con la instalación de Node.js).
+* **Motor de Base de Datos:** Motor SQLite3 embebido (Gestionado a través de dependencias de Node.js, sin necesidad de servidores de base de datos externos).
+
+---
+
+## 4. Instrucciones de Instalación y Despliegue Local
+
+Siga la siguiente secuencia de comandos en la terminal de la línea de comandos para inicializar el entorno técnico de la aplicación:
+
+### Paso 1: Clonar el repositorio
+```bash
+git clone [https://github.com/tu-usuario/tu-repositorio.git](https://github.com/tu-usuario/tu-repositorio.git)
+cd tu-repositorio
+### Paso 2: Instalar las dependencias declaradas
+Este comando descarga e instala de forma automatizada los módulos del backend (Express, SQLite3, Bcrypt para hashing de contraseñas, entre otros) especificados en el archivo `package.json`:
+
+```bash
+npm install
+### Paso 3: Inicialización de la Base de Datos
+Asegúrese de que el archivo `db.sqlite` se genere correctamente en el directorio correspondiente ejecutando el script de inicialización o levantando la aplicación por primera vez, lo cual creará de forma automática las tablas estructuradas a partir del esquema lógico (`schema.sql`).
+
+### Paso 4: Ejecución del servidor web
+Inicie el servidor local de Node.js para escuchar peticiones entrantes:
+
+```bash
+npm start
+Una vez levantado el servicio, acceda a la plataforma desde cualquier navegador web utilizando la dirección URL local predeterminada: `http://localhost:3000`.
+
+---
+
+## 5. Casos de Uso Core Implementados
+
+El sistema implementa y valida funcionalmente los siguientes requisitos lógicos del negocio:
+
+* **CU-01: Registro de Usuario e Inserción de Datos Personales:** Módulo con persistencia en SQLite que implementa restricciones `UNIQUE` lógicas a nivel de base de datos para impedir la duplicidad de números de cédula e identidades de correo electrónico.
+* **CU-02: Control de Acceso y Configuración Obligatoria de Perfil:** Middleware de seguridad que intercepta la sesión activa y restringe el acceso al ecosistema de la plataforma, obligando al usuario a parametrizar sus oficios, zonas geográficas de cobertura en Colonias Unidas y disponibilidad temporal antes de operar.
+* **CU-03: Búsqueda de Profesionales y Conexión Externa:** Motor de consulta SQL indexado dinámico que provee filtrado por categorías, enlazando directamente al empleador con la API externa del protocolo de WhatsApp del profesional para una contratación expedita.
+* **CU-04: Baja Voluntaria del Perfil con Justificación de Salida:** Proceso transaccional de borrado físico/lógico en la base de datos que libera las credenciales personales y recopila métricas de usabilidad para la administración del sistema.
