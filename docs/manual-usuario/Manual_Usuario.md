@@ -12,13 +12,16 @@ Al ingresar a la plataforma, se presentará la pantalla de inicio. Los usuarios 
 
 ### Flujo de Consulta Dinámica
 1. **Filtros Activos:** El demandante accede a la vista de búsqueda, la cual expone un menú de selección de oficios y zonas de Colonias Unidas (Hohenau, Obligado, Bella Vista).
+
+![Filtros Activos](../vista/buscador.png)
+
 2. **Resultados Indexados:** El sistema renderiza las tarjetas de perfil que coincidan con el criterio exacto a partir de las consultas a la base de datos.
 
-[Buscador de Servicios](../vista/acceso_buscar.png)
+![Resultados Indexados](../vista/acceso_buscar.png)
 
 3. **Protocolo de Enlace Externo:** Al presionar el botón de contacto, el sistema invoca dinámicamente el protocolo de WhatsApp Web/Móvil para abrir un canal de comunicación directo y privado entre el cliente y el profesional.
 
-[Enlace de Contacto](../vista/contacto.png)
+![Protocolo de Enlace Externo](../evidencias/redireccionar.png)
 
 ---
 
@@ -56,9 +59,13 @@ El usuario debe declarar de manera obligatoria:
 
 ## 4. Módulo de Administración del Sistema
 
-Los usuarios con privilegios de administración disponen de una interfaz exclusiva para monitorear el comportamiento global de la plataforma, gestionar las categorías del sistema y controlar las métricas operativas.
+Los usuarios con privileges de administración disponen de una interfaz exclusiva para monitorear el comportamiento global de la plataforma, gestionar las categorías del sistema y controlar las métricas operativas.
 
 ![Módulo del Administrador](../manual-usuario/capturas/administrador.png)
+
+### Gestión de Seguridad y Control Operativo
+![Bloquear Cuenta](../evidencias/bloquear_cuenta.png)
+![Cuenta Bloqueada](../evidencias/bloqueado.png)
 
 ---
 
@@ -67,5 +74,13 @@ Los usuarios con privilegios de administración disponen de una interfaz exclusi
 Flujo transaccional que permite al profesional revocar de forma autónoma la visibilidad de sus datos.
 
 1. El profesional ingresa a la sección de configuración de su panel y selecciona la opción **"Eliminar mi cuenta"**.
+
+![Eliminar Cuenta](../evidencias/eliminar_cuenta.png)
+
 2. El sistema requiere una confirmación y la selección/redacción del motivo de su salida por cuestiones estadísticas.
+
+![Confirmar Eliminación](../vista/confirmar_eliminar.png)
+
 3. Al procesar la baja, el controlador purga el registro de la base de datos relacional, removiendo inmediatamente el perfil de los índices de búsqueda pública y liberando el número de cédula para futuros registros si fuesen necesarios.
+
+![Cuenta Eliminada](../evidencias/eliminado.png)
