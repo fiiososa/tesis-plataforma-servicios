@@ -54,8 +54,8 @@ Siga la siguiente secuencia de comandos en la terminal de la línea de comandos 
 
 ### Paso 1: Clonar el repositorio
 ```bash
-git clone [https://github.com/tu-usuario/tu-repositorio.git](https://github.com/tu-usuario/tu-repositorio.git)
-cd tu-repositorio
+git clone [https://github.com/tu-usuario/tu-repositorio.git](https://github.com/fiiososa/tesis-plataforma-servicios.git)
+cd tesis-plataforma-servicios
 ```
 ### Paso 2: Instalar las dependencias declaradas
 Este comando descarga e instala de forma automatizada los módulos del backend (Express, SQLite3, Bcrypt para hashing de contraseñas, entre otros) especificados en el archivo `package.json`:
