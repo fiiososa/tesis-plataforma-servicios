@@ -14,11 +14,11 @@ Al ingresar a la plataforma, se presentará la pantalla de inicio. Los usuarios 
 1. **Filtros Activos:** El demandante accede a la vista de búsqueda, la cual expone un menú de selección de oficios y zonas de Colonias Unidas (Hohenau, Obligado, Bella Vista).
 2. **Resultados Indexados:** El sistema renderiza las tarjetas de perfil que coincidan con el criterio exacto a partir de las consultas a la base de datos.
 
-![Buscador de Servicios](../vista/acceso_buscar.png)
+[Buscador de Servicios](../vista/acceso_buscar.png)
 
 3. **Protocolo de Enlace Externo:** Al presionar el botón de contacto, el sistema invoca dinámicamente el protocolo de WhatsApp Web/Móvil para abrir un canal de comunicación directo y privado entre el cliente y el profesional.
 
-![Enlace de Contacto](../vista/contacto.png)
+[Enlace de Contacto](../vista/contacto.png)
 
 ---
 
