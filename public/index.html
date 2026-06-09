@@ -1,13 +1,316 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-  <meta charset="UTF-8" />
-  <title>Plataforma de Servicios</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Servicios Colonias Unidas</title>
+
   <link rel="stylesheet" href="estilos.css">
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
+
 <body>
-  <h1>BIENVENIDO A LA PLATAFORMA DIGITAL DE OFERTA Y DEMANDA DE SERVICIOS</h1>
-  <button onclick="window.location.href='registro.html'">Registrarse</button>
-  <button onclick="window.location.href='login.html'">Iniciar Sesión</button>
+
+  <!-- NAVBAR -->
+  <nav>
+    <a href="#inicio"><i class="fas fa-home"></i> Inicio</a>
+    <a href="#categorias"><i class="fas fa-briefcase"></i> Servicios</a>
+    <a href="#funciona"><i class="fas fa-circle-info"></i> ¿Cómo funciona?</a>
+    <a href="login.html"><i class="fas fa-right-to-bracket"></i> Ingresar</a>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero" id="inicio">
+
+    <div class="hero-texto">
+
+      <div class="hero-badge">
+        <i class="fas fa-shield-heart"></i>
+        Plataforma Digital Profesional
+      </div>
+
+      <h1>
+        Encuentra profesionales confiables
+        en las Colonias Unidas
+      </h1>
+
+      <p>
+        Conecta con trabajadores independientes, ofrece tus servicios
+        y encuentra oportunidades laborales de forma rápida y segura.
+      </p>
+
+      <div class="hero-botones">
+
+        <button id="btnCrearCuenta" onclick="window.location.href='registro.html'">
+
+          <i class="fas fa-user-plus"></i>
+          Crear Cuenta
+        </button>
+
+        <button id="btnExplorar" class="btn-secundario" onclick="window.location.href='buscar.html'">
+
+          <i class="fas fa-magnifying-glass"></i>
+          Explorar Servicios
+        </button>
+
+      </div>
+
+      <div class="hero-stats">
+
+        <div class="stat-card">
+          <h3>+50</h3>
+          <p>Profesionales</p>
+        </div>
+
+        <div class="stat-card">
+          <h3>+10</h3>
+          <p>Oficios</p>
+        </div>
+
+        <div class="stat-card">
+          <h3>24/7</h3>
+          <p>Disponibilidad</p>
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="hero-imagen">
+
+      <div class="hero-card">
+
+        <i class="fas fa-briefcase"></i>
+
+        <h2>Servicios Colonias Unidas</h2>
+
+        <p>
+          Una plataforma diseñada para conectar profesionales
+          y clientes en un solo lugar.
+        </p>
+
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- CATEGORÍAS -->
+  <section class="categorias" id="categorias">
+
+    <div class="section-title">
+      <h2>Servicios Populares</h2>
+      <p>Explora algunas de las categorías disponibles</p>
+    </div>
+
+    <div class="categorias-grid">
+
+      <div class="servicio-card" onclick="filtrarServicio('electricista')">
+
+        <i class="fas fa-bolt"></i>
+        <h3>Electricista</h3>
+
+      </div>
+
+      <div class="servicio-card" onclick="filtrarServicio('plomero')">
+
+        <i class="fas fa-wrench"></i>
+        <h3>Plomeros</h3>
+
+      </div>
+
+      <div class="servicio-card" onclick="filtrarServicio('jardinero')">
+
+        <i class="fas fa-leaf"></i>
+        <h3>Jardineros</h3>
+
+      </div>
+
+      <div class="servicio-card" onclick="filtrarServicio('limpiador')">
+
+        <i class="fas fa-broom"></i>
+        <h3>Limpiadores</h3>
+
+      </div>
+
+      <div class="servicio-card" onclick="filtrarServicio('niñero')">
+
+        <i class="fas fa-baby"></i>
+        <h3>Niñeros</h3>
+
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- CÓMO FUNCIONA -->
+  <section class="funciona" id="funciona">
+
+    <div class="section-title">
+      <h2>¿Cómo funciona?</h2>
+      <p>Usar la plataforma es rápido y sencillo</p>
+    </div>
+
+    <div class="pasos-grid">
+
+      <div class="paso-card">
+        <div class="paso-numero">1</div>
+        <h3>Regístrate</h3>
+        <p>Crea tu cuenta en pocos segundos.</p>
+      </div>
+
+      <div class="paso-card">
+        <div class="paso-numero">2</div>
+        <h3>Crea tu perfil</h3>
+        <p>Publica tus servicios y disponibilidad.</p>
+      </div>
+
+      <div class="paso-card">
+        <div class="paso-numero">3</div>
+        <h3>Conecta</h3>
+        <p>Encuentra clientes o profesionales fácilmente.</p>
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+
+    <h3>Servicios Colonias Unidas</h3>
+
+    <p>
+      Plataforma digital para la oferta y demanda
+      de servicios profesionales.
+    </p>
+
+    <div class="footer-links">
+
+  <a href="terminos.html">
+    Términos
+  </a>
+
+  <a href="privacidad.html">
+    Privacidad
+  </a>
+
+  <a href="contacto.html">
+    Contacto
+  </a>
+
+</div>
+
+  </footer>
+
+  <script>
+
+    const usuario = JSON.parse(
+      localStorage.getItem('usuario')
+    );
+
+    const botones =
+      document.querySelector('.hero-botones');
+
+    const nav =
+      document.querySelector('nav');
+
+    // SI EL USUARIO YA INICIÓ SESIÓN
+    if (usuario) {
+
+      // CAMBIAR BOTONES HERO
+      if (usuario.rol === 'admin') {
+
+        botones.innerHTML = `
+
+        <button
+        onclick="window.location.href='admin.html'">
+
+          <i class="fas fa-shield-halved"></i>
+          Panel Administrador
+
+        </button>
+
+        <button
+        class="btn-secundario"
+        onclick="cerrarSesion()">
+
+          <i class="fas fa-power-off"></i>
+          Cerrar Sesión
+
+        </button>
+      `;
+
+      } else {
+
+        botones.innerHTML = `
+
+        <button
+        onclick="window.location.href='perfil.html'">
+
+          <i class="fas fa-user"></i>
+          Mi Perfil
+
+        </button>
+
+        <button
+        class="btn-secundario"
+        onclick="window.location.href='buscar.html'">
+
+          <i class="fas fa-magnifying-glass"></i>
+          Buscar Profesionales
+
+        </button>
+      `;
+
+      }
+
+      // CAMBIAR NAVBAR
+      nav.innerHTML = `
+
+      <a href="#inicio">
+        <i class="fas fa-home"></i> Inicio
+      </a>
+
+      <a href="buscar.html">
+        <i class="fas fa-search"></i> Buscar
+      </a>
+
+      <a href="perfil.html">
+        <i class="fas fa-user"></i> Mi Perfil
+      </a>
+
+      <a href="#" onclick="cerrarSesion()">
+        <i class="fas fa-sign-out-alt"></i> Salir
+      </a>
+
+    `;
+
+    }
+
+    // CERRAR SESIÓN
+    function cerrarSesion() {
+
+      localStorage.clear();
+
+      window.location.href = 'index.html';
+
+    }
+
+    // FILTRAR SERVICIO
+    function filtrarServicio(servicio) {
+
+      window.location.href =
+        `buscar.html?oficio=${servicio}`;
+
+    }
+
+  </script>
+
 </body>
+
 </html>

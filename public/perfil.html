@@ -1,82 +1,361 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
-  <title>Crear Perfil</title>
+  <title>Mi Perfil</title>
   <link rel="stylesheet" href="estilos.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
+
 <body>
-  <h2>Completar Perfil</h2>
+
+<nav>
+  <a href="index.html"><i class="fas fa-home"></i> Inicio</a>
+  <a href="perfil.html" style="color: var(--primary);"><i class="fas fa-user"></i> Mi Perfil</a>
+  <a href="buscar.html"><i class="fas fa-search"></i> Buscar</a>
+  <a href="#" onclick="cerrarSesion()"><i class="fas fa-power-off"></i> Salir</a>
+</nav>
+
+<div class="container" style="max-width: 500px;">
+
+<h2 id="saludoUsuario">
+  <i class="fas fa-user-circle" style="color: var(--primary);"></i> Mi Perfil
+</h2>
+
+<div id="vistaPerfil"></div>
+
+<div id="modoEdicion" style="display:none;">
   <form id="perfilForm">
-    <label>Oficio (podés seleccionar varios):</label>
-    <select name="oficios" multiple required>
-      <option value="empleador">Empleador</option>
-      <option value="electricista">Electricista</option>
-      <option value="jardinero">Jardinero</option>
-      <option value="plomero">Plomero</option>
-      <option value="limpiador">Limpiador</option>
-      <option value="niñero">Niñero</option>
-      <option value="mantenimiento">Mantenimiento de aire</option>
-      <option value="pintor">Pintor</option>
-      <option value="profesor">Profesor</option>
-      <option value="carpintero">Carpintero</option>
-      <option value="fletero">Fletero</option>
-      <option value="otro">Otro</option>
-    </select><br><br>
+    <label>Tipo de Perfil</label>
+    <div class="roles-box">
+      <label class="check-role">
+        <input type="checkbox" name="chkTrabajador" id="rolTrabajador"> Trabajador
+      </label>
+      <label class="check-role">
+        <input type="checkbox" name="chkEmpleador" id="rolEmpleador"> Empleador
+      </label>
+    </div>
 
-    <label>Horario laboral:</label>
-    <select name="horario">
-      <option value="mañana">Por la mañana</option>
-      <option value="tarde">Por la tarde</option>
-      <option value="otro">Establecer horario</option>
-    </select><br><br>
+    <div id="bloqueTrabajador" style="display:none;">
+      <label>Mis Oficios</label>
+      <div id="contenedorOficios"></div>
 
-    <label>Área de trabajo:</label>
-    <select name="area" required>
-      <option value="hohenau">Hohenau</option>
-      <option value="bella vista">Bella Vista</option>
-      <option value="obligado">Obligado</option>
-    </select><br><br>
+      <button type="button" onclick="agregarOficio()" class="btn-volver" style="font-size:0.85rem; padding:10px; margin-bottom: 15px;">
+        <i class="fas fa-plus-circle"></i> Agregar otro oficio
+      </button>
 
-    <label>Tarifa (opcional):</label>
-    <input type="number" name="tarifa" placeholder="Monto en Gs."><br><br>
+      <label>Disponibilidad Horaria</label>
+      <select name="horario">
+        <option value="mañana">Solo Mañana</option>
+        <option value="tarde">Solo Tarde</option>
+        <option value="todo el dia">Todo el día</option>
+      </select>
 
-    <button type="submit">Guardar Perfil</button>
+      <label>Zona de Trabajo</label>
+      <select name="area">
+        <option value="hohenau">Hohenau</option>
+        <option value="obligado">Obligado</option>
+        <option value="bella vista">Bella Vista</option>
+        <option value="colonias unidas">Colonias Unidas</option>
+      </select>
+
+      <label>Tarifa Base (Gs.)</label>
+      <input type="number" name="tarifa" placeholder="Ej: 50000">
+    </div>
+
+    <button type="submit" style="margin-top: 15px;">Guardar Cambios</button>
+    <button type="button" class="btn-volver" id="btnCancelar" onclick="cancelarEdicion()">Cancelar</button>
   </form>
+</div>
 
-  <p id="mensaje"></p>
+<div id="seccionEliminarCuenta" style="display:none; margin-top: 20px; padding: 20px; border: 2px solid #e74c3c; border-radius: 8px; background: #fff5f5;">
+  <h3 style="color: #e74c3c; margin-top: 0;"><i class="fas fa-exclamation-triangle"></i> Justifica tu salida</h3>
+  <p style="font-size: 0.9rem; color: #555;">Lamentamos que decidas irte. Por favor, dinos el motivo de tu salida:</p>
+  
+  <form id="formJustificacion" onsubmit="procesarEliminacionCuenta(event)">
+    <label style="font-weight: bold; display: block; margin-bottom: 5px;">Motivo principal:</label>
+    <select id="motivoBaja" required style="width: 100%; padding: 8px; margin-bottom: 15px;">
+      <option value="no me funciona apropiadamente">No me funciona apropiadamente</option>
+      <option value="ya no le doy utilidad">Ya no le doy utilidad</option>
+      <option value="encontre otra plataforma">Encontré otra plataforma</option>
+      <option value="motivos de privacidad">Motivos de privacidad</option>
+      <option value="otro">Otro motivo</option>
+    </select>
 
-  <script>
-    document.getElementById('perfilForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
+    <label style="font-weight: bold; display: block; margin-bottom: 5px;">Comentario adicional (Opcional):</label>
+    <textarea id="comentarioBaja" placeholder="Escribe aquí tus sugerencias o comentarios..." style="width: 100%; height: 8px; min-height: 70px; padding: 8px; margin-bottom: 15px; box-sizing: border-box; resize: vertical;"></textarea>
 
-      const usuario_id = localStorage.getItem('usuario_id'); // ← necesario
+    <button type="submit" style="background: #e74c3c; color: white; width: 100%;">Confirmar y Eliminar Definitivamente</button>
+    <button type="button" class="btn-volver" onclick="cancelarEliminacion()" style="width: 100%; margin-top: 5px;">Volver Atrás</button>
+  </form>
+</div>
 
-      if (!usuario_id) {
-        document.getElementById('mensaje').innerText = 'Error: No se encontró usuario autenticado';
+</div>
+
+<script>
+const usuario = JSON.parse(localStorage.getItem('usuario'));
+const usuario_id = localStorage.getItem('usuario_id');
+
+if (!usuario_id || !usuario) {
+    window.location.href = 'login.html';
+}
+
+if (usuario && usuario.nombre) {
+    document.getElementById('saludoUsuario').innerHTML = `
+        <i class="fas fa-user-circle" style="color: var(--primary);"></i>
+        ¡Hola ${usuario.nombre}! Este es tu perfil:
+    `;
+}
+
+const form = document.getElementById('perfilForm');
+const bloqueTrabajador = document.getElementById('bloqueTrabajador');
+
+function actualizarVistaRoles() {
+  if (form.chkTrabajador.checked) {
+    bloqueTrabajador.style.display = "block";
+  } else {
+    bloqueTrabajador.style.display = "none";
+  }
+}
+
+form.chkTrabajador.addEventListener('change', actualizarVistaRoles);
+form.chkEmpleador.addEventListener('change', actualizarVistaRoles);
+
+function cerrarSesion() {
+  localStorage.clear();
+  window.location.href = 'index.html';
+}
+
+function cap(t) {
+  if(!t) return 'No especificado';
+  return t.charAt(0).toUpperCase() + t.slice(1);
+}
+
+function agregarOficio(valorPredeterminado = "electricista") {
+  const container = document.getElementById('contenedorOficios');
+  const div = document.createElement('div');
+  div.className = "fila-oficio";
+
+  const opciones = [
+    { val: "electricista", txt: "Electricista" },
+    { val: "jardinero", txt: "Jardinero" },
+    { val: "plomero", txt: "Plomero" },
+    { val: "limpiador", txt: "Limpieza" },
+    { val: "niñero", txt: "Niñero" }
+  ];
+
+  let opcionesHTML = opciones.map(opt =>
+    `<option value="${opt.val}" ${opt.val === valorPredeterminado.toLowerCase() ? "selected" : ""}>
+      ${opt.txt}
+    </option>`
+  ).join('');
+
+  div.innerHTML = `
+    <select name="oficios" style="margin-bottom: 5px;">
+      ${opcionesHTML}
+    </select>
+    <button type="button" onclick="this.parentElement.remove()" style="width:45px; margin:0 0 5px 5px; background:#e74c3c; color:white; border:none; border-radius:4px;">
+      <i class="fas fa-times"></i>
+    </button>
+  `;
+  container.appendChild(div);
+}
+
+// CARGAR Y VERIFICAR EL PERFIL
+async function cargarPerfil() {
+  try {
+    const res = await fetch(`/api/verificar/${usuario_id}`);
+    
+    if (res.status === 404) {
+        document.getElementById('vistaPerfil').style.display = 'none';
+        document.getElementById('modoEdicion').style.display = 'block';
+        document.getElementById('btnCancelar').style.display = 'none'; 
+        agregarOficio(); 
         return;
+    }
+
+    const data = await res.json();
+    const vista = document.getElementById('vistaPerfil');
+    
+    // VALIDACIÓN ESTRICTA BASADA EN TU BACKEND:
+    if (data.tienePerfil && data.perfil) {
+      const p = data.perfil;
+      
+      // Sincronizar Checkboxes del Formulario de edición en segundo plano
+      form.chkTrabajador.checked = Number(p.rol_trabajador) === 1;
+      form.chkEmpleador.checked = Number(p.rol_empleador) === 1;
+      actualizarVistaRoles();
+
+      // Asegurar estados visuales correctos de los contenedores
+      document.getElementById('modoEdicion').style.display = 'none';
+      vista.style.display = 'block';
+
+      // Construcción exacta del texto de visualización de roles
+      let rolesTexto = [];
+      if (Number(p.rol_empleador) === 1) rolesTexto.push("empleador");
+      if (Number(p.rol_trabajador) === 1) rolesTexto.push("trabajador");
+      let mensajeRoles = rolesTexto.length > 0 ? rolesTexto.join(' y ') : 'Ninguno seleccionado';
+
+      const tarifaTexto = p.tarifa ? Number(p.tarifa).toLocaleString() + " Gs." : "tarifa base";
+
+      // Renderizar la tarjeta informativa con los botones abajo
+      vista.innerHTML = `
+        <div class="card" style="margin-top:15px; padding:20px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); line-height: 1.6;">
+          <p>Usted se ha registrado como <strong>${mensajeRoles}</strong></p>
+          
+          ${Number(p.rol_trabajador) === 1 ? `
+            <p style="margin: 5px 0 0 0;">con el oficio de:</p>
+            <ul style="margin: 2px 0 10px 15px; padding: 0; font-weight: bold;">
+              ${(p.oficios || '').split(', ').map(o => `<li>${cap(o)}</li>`).join('')}
+            </ul>
+            <p>por la <strong>${p.horario || 'No especificado'}</strong></p>
+            <p>en <strong>${cap(p.area)}</strong></p>
+            <p>con <strong>${tarifaTexto}</strong></p>
+          ` : '<p style="color:gray; font-style:italic; margin-top: 10px;">Perfil configurado únicamente para buscar profesionales o contratar.</p>'}
+          
+          <div style="margin-top: 20px; display: flex; gap: 10px;">
+            <button onclick="activarEdicion()" style="flex: 1;">
+              <i class="fas fa-pen"></i> Editar Perfil
+            </button>
+            <button class="btn-volver" onclick="solicitarEliminarCuenta()" style="background:#e74c3c; color:white; flex: 1;">
+              <i class="fas fa-user-times"></i> Eliminar Cuenta
+            </button>
+          </div>
+        </div>
+      `;
+
+      // Sincronizar campos internos del formulario de edición
+      document.getElementById('contenedorOficios').innerHTML = "";
+      if (p.oficios && p.oficios !== 'empleador') {
+          p.oficios.split(', ').forEach(of => agregarOficio(of));
+      } else {
+          agregarOficio();
       }
 
-      const form = e.target;
-      const oficiosSeleccionados = Array.from(form.oficios.selectedOptions).map(op => op.value);
+      if(p.horario) form.horario.value = p.horario;
+      if(p.area) form.area.value = p.area;
+      if(p.tarifa) form.tarifa.value = p.tarifa;
+      
+    } else {
+      // Si la respuesta indica que no tiene perfil, forzar creación
+      document.getElementById('vistaPerfil').style.display = 'none';
+      document.getElementById('modoEdicion').style.display = 'block';
+      document.getElementById('btnCancelar').style.display = 'none';
+      agregarOficio();
+    }
+  } catch (error) {
+    console.error("Error al cargar perfil:", error);
+    document.getElementById('vistaPerfil').style.display = 'none';
+    document.getElementById('modoEdicion').style.display = 'block';
+  }
+}
 
-      const datos = {
-        usuario_id,
-        oficios: oficiosSeleccionados,
-        horario: form.horario.value,
-        area: form.area.value,
-        tarifa: form.tarifa.value
-      };
+function activarEdicion() {
+  document.getElementById('vistaPerfil').style.display = 'none';
+  document.getElementById('seccionEliminarCuenta').style.display = 'none';
+  document.getElementById('modoEdicion').style.display = 'block';
+  document.getElementById('btnCancelar').style.display = 'inline-block';
+}
 
-      const respuesta = await fetch('/api/perfil', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(datos)
-      });
+function cancelarEdicion() {
+  document.getElementById('vistaPerfil').style.display = 'block';
+  document.getElementById('modoEdicion').style.display = 'none';
+}
 
-      const mensaje = await respuesta.text();
-      document.getElementById('mensaje').innerText = mensaje;
+function solicitarEliminarCuenta() {
+    if (confirm("¿Estás seguro de que quieres eliminar tu cuenta? Esta acción borrará permanentemente tus datos de acceso y tu perfil profesional.")) {
+        document.getElementById('vistaPerfil').style.display = 'none';
+        document.getElementById('modoEdicion').style.display = 'none';
+        document.getElementById('seccionEliminarCuenta').style.display = 'block';
+    }
+}
+
+function cancelarEliminacion() {
+    document.getElementById('seccionEliminarCuenta').style.display = 'none';
+    document.getElementById('vistaPerfil').style.display = 'block';
+}
+
+async function procesarEliminacionCuenta(e) {
+    e.preventDefault();
+    const motivo = document.getElementById('motivoBaja').value;
+    const comentario = document.getElementById('comentarioBaja').value.trim();
+
+    try {
+        const res = await fetch(`/api/perfil/${usuario_id}`, { 
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ motivo, comentario })
+        });
+
+        if (res.ok) {
+            alert("Su cuenta ha sido eliminada exitosamente.");
+            localStorage.clear();
+            window.location.href = 'registro.html';
+        } else {
+            alert("Ocurrió un error en el servidor al intentar eliminar la cuenta.");
+        }
+    } catch (error) {
+        console.error("Error:", error);
+        alert("No se pudo conectar con el servidor.");
+    }
+}
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const trabajador = form.chkTrabajador.checked;
+  const empleador = form.chkEmpleador.checked;
+
+  if (!trabajador && !empleador) {
+    alert("Debes seleccionar al menos un tipo de perfil.");
+    return;
+  }
+
+  // Capturar los selects de forma segura usando querySelector para evitar el error 'undefined'
+  const selectHorario = document.querySelector('select[name="horario"]');
+  const selectArea = document.querySelector('select[name="area"]');
+  const inputTarifa = document.querySelector('input[name="tarifa"]');
+
+  const oficiosSeleccionados = trabajador
+    ? Array.from(document.querySelectorAll('select[name="oficios"]')).map(s => s.value)
+    : [];
+  
+  const oficiosTexto = trabajador ? oficiosSeleccionados.join(', ') : 'empleador';
+
+  // Construcción limpia de los datos mapeando los valores reales del formulario
+  const datos = {
+    usuario_id: usuario_id,
+    rol_trabajador: trabajador ? 1 : 0,
+    rol_empleador: empleador ? 1 : 0,
+    oficios: oficiosTexto,
+    horario: trabajador && selectHorario ? selectHorario.value : '',
+    area: trabajador && selectArea ? selectArea.value : '',
+    tarifa: trabajador && inputTarifa && inputTarifa.value ? Number(inputTarifa.value) : null
+  };
+
+  try {
+    const res = await fetch('/api/perfil', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(datos)
     });
-  </script>
+
+    if (res.ok) {
+      alert("Perfil guardado con éxito");
+      await cargarPerfil(); // Esto recargará la vista y te mostrará los datos guardados
+    } else {
+      alert("Error al guardar el perfil en el servidor.");
+    }
+  } catch (err) {
+    console.error(err);
+    alert("Error de conexión al guardar.");
+  }
+});
+
+// Inicializar de inmediato
+cargarPerfil();
+</script>
+
 </body>
 </html>

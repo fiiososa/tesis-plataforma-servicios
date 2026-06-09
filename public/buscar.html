@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Buscador de Profesionales</title>
+    <link rel="stylesheet" href="estilos.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+
+    <nav>
+        <a href="index.html">
+            <i class="fas fa-home"></i> Inicio
+        </a>
+        <a href="perfil.html">
+            <i class="fas fa-user"></i> Mi Perfil
+        </a>
+        <a href="buscar.html" style="color: var(--primary);">
+            <i class="fas fa-search"></i> Buscar
+        </a>
+        <a href="#" onclick="cerrarSesion()">
+            <i class="fas fa-sign-out-alt"></i> Salir
+        </a>
+    </nav>
+
+    <div class="container-busqueda">
+
+        <div id="mensajeLogin" class="mensaje-login oculto">
+            <h2>🔒 Acceso restringido</h2>
+            <p>Inicia sesión o regístrate para ver los profesionales disponibles.</p>
+            <a href="login.html" class="btn-login">Iniciar Sesión</a>
+        </div>
+
+        <div id="contenidoBusqueda">
+            <div style="text-align: center; margin-bottom: 40px;">
+                <h2 style="font-size: 2.2rem; margin-bottom: 5px;">Encuentra Expertos</h2>
+                <p style="color: var(--text-muted);">Servicios profesionales en las Colonias Unidas</p>
+                <div style="max-width: 600px; margin: 30px auto;">
+                    <input 
+                        type="text" 
+                        id="filtroOficio" 
+                        placeholder="🔍 ¿Qué servicio necesitas?" 
+                        onkeyup="filtrarPerfiles()"
+                        style="
+                            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+                            padding: 18px 25px;
+                            border-radius: 50px;
+                            border: none;
+                            background: white;
+                            width: 100%;
+                            box-sizing: border-box;
+                        "
+                    >
+                </div>
+            </div>
+
+            <div id="listaPerfiles" class="grid-perfiles"></div>
+        </div>
+
+    </div>
+
+<script>
+function cerrarSesion() {
+    localStorage.clear();
+    window.location.href = 'index.html';
+}
+
+function cap(t) {
+    if (!t) return '';
+    return t.charAt(0).toUpperCase() + t.slice(1);
+}
+
+// Obtener datos del usuario en sesión
+const usuario = JSON.parse(localStorage.getItem("usuario"));
+const contenidoBusqueda = document.getElementById("contenidoBusqueda");
+const mensajeLogin = document.getElementById("mensajeLogin");
+
+if (!usuario || !usuario.id) {
+    contenidoBusqueda.style.display = "none";
+    mensajeLogin.classList.remove("oculto");
+} else {
+    cargarPerfiles();
+}
+
+async function cargarPerfiles() {
+    try {
+        const res = await fetch('/api/perfiles');
+        if (!res.ok) throw new Error('Error al obtener perfiles');
+
+        const perfiles = await res.json();
+        const contenedor = document.getElementById('listaPerfiles');
+        contenedor.innerHTML = "";
+
+        perfiles.forEach(p => {
+            // No mostrar el propio perfil en la búsqueda
+            if (p.usuario_id == usuario.id) return;
+
+            // Procesar los oficios asignados
+            const oficiosArray = p.oficios ? p.oficios.split(', ').map(o => o.toLowerCase()) : [];
+            const reales = oficiosArray.filter(o => o !== 'empleador');
+
+            if (reales.length > 0) {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.setAttribute('data-oficio', reales.join(' '));
+
+                // ==========================================
+                // SCRIPT DE LIMPIEZA DE TELÉFONO (PARAGUAY)
+                // ==========================================
+                let telefonoLimpio = p.telefono ? p.telefono.toString().trim() : '';
+                
+                // 1. Dejar únicamente números dígitos
+                telefonoLimpio = telefonoLimpio.replace(/\D/g, ''); 
+
+                // 2. Remover el '0' local si existe (ej: 0981 -> 981)
+                if (telefonoLimpio.startsWith('0')) {
+                    telefonoLimpio = telefonoLimpio.substring(1);
+                }
+
+                // 3. Añadir el código internacional de Paraguay si no lo tiene
+                if (!telefonoLimpio.startsWith('595')) {
+                    telefonoLimpio = '595' + telefonoLimpio;
+                }
+                // ==========================================
+
+                const msg = encodeURIComponent(
+                    `Hola ${p.nombre}, vi tu perfil en la plataforma y me interesa tu servicio.`
+                );
+
+                // Formatear tarifa numéricamente (Ej: 50000 -> "50.000 Gs.")
+                const tarifaFormateada = p.tarifa && !isNaN(p.tarifa)
+                    ? Number(p.tarifa).toLocaleString('es-PY') + ' Gs.'
+                    : 'A convenir';
+
+                // CORRECCIÓN: Se limpiaron todos los comentarios indeseados (//) de la plantilla HTML
+                card.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:15px;">
+                        <h3 style="margin:0; font-size:1.2rem;">
+                            <i class="fas fa-user-circle"></i> ${p.nombre}
+                        </h3>
+                        <span class="badge">${(p.area || 'General').toUpperCase()}</span>
+                    </div>
+                    <div style="font-size:0.95rem; line-height:1.6; flex-grow:1;">
+                        <p>
+                            <strong><i class="fas fa-tools" style="color:var(--primary);"></i> Oficios:</strong>
+                            ${reales.map(cap).join(', ')}
+                        </p>
+                        <p>
+                            <strong><i class="fas fa-clock" style="color:var(--primary);"></i> Horario:</strong>
+                            ${cap(p.horario || 'No especificado')}
+                        </p>
+                        <p>
+                            <strong><i class="fas fa-tag" style="color:var(--primary);"></i> Tarifa:</strong>
+                            ${tarifaFormateada}
+                        </p>
+                    </div>
+                    <a href="https://wa.me/${telefonoLimpio}?text=${msg}" class="btn-whatsapp" target="_blank">
+                        <i class="fab fa-whatsapp"></i> Contactar ahora
+                    </a>
+                `;
+                contenedor.appendChild(card);
+            }
+        });
+
+        // Filtrar automáticamente si viene un oficio por parámetro en la URL
+        const params = new URLSearchParams(window.location.search);
+        const oficio = params.get('oficio');
+        if (oficio) {
+            document.getElementById('filtroOficio').value = oficio;
+            filtrarPerfiles();
+        }
+    } catch (error) {
+        console.error("Hubo un error cargando los perfiles:", error);
+    }
+}
+
+function filtrarPerfiles() {
+    const val = document.getElementById('filtroOficio').value.toLowerCase().trim();
+    document.querySelectorAll('.card').forEach(c => {
+        const dataOficio = c.getAttribute('data-oficio') || '';
+        // Si el buscador está vacío o coincide el texto, se muestra la tarjeta
+        c.style.display = dataOficio.includes(val) ? "flex" : "none";
+    });
+}
+</script>
+
+</body>
+</html>

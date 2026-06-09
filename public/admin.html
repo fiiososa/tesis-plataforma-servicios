@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>Panel Administrador</title>
+
+    <link rel="stylesheet" href="estilos.css">
+
+    <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+</head>
+
+<body>
+
+<nav>
+
+    <a href="admin.html">
+        <i class="fas fa-shield-halved"></i>
+        Admin
+    </a>
+
+    <a href="#usuarios">
+    <i class="fas fa-users"></i>
+    Usuarios
+    </a>
+
+    <a href="#"
+    onclick="cerrarSesion()">
+
+        <i class="fas fa-power-off"></i>
+        Salir
+
+    </a>
+
+</nav>
+
+<div class="container-busqueda">
+
+    <div style="text-align:center; margin-bottom:40px;">
+
+        <h1>
+            <i class="fas fa-user-shield"></i>
+            Panel Administrador
+        </h1>
+
+        <p style="color: var(--text-muted);">
+            Gestión completa de usuarios y perfiles
+        </p>
+
+    </div>
+
+    <div id="usuarios"></div>
+
+</div>
+
+<script>
+
+const usuario = JSON.parse(localStorage.getItem('usuario'));
+
+if (!usuario || usuario.rol !== 'admin') {
+
+    window.location.href = 'login.html';
+
+}
+
+function cerrarSesion() {
+
+    localStorage.clear();
+
+    window.location.href = 'index.html';
+
+}
+
+async function cargarUsuarios() {
+
+    const res = await fetch('/api/perfiles');
+
+    const perfiles = await res.json();
+
+    const contenedor = document.getElementById('usuarios');
+
+    contenedor.innerHTML = "";
+
+    perfiles.forEach(p => {
+
+        const card = document.createElement('div');
+
+        card.className = 'card';
+
+        card.style.marginBottom = "20px";
+
+        card.innerHTML = `
+
+<div style="
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:20px;
+">
+
+    <div>
+
+        <h2 style="margin:0;">
+            <i class="fas fa-user-shield"
+            style="color:var(--primary);"></i>
+
+            ${p.nombre}
+        </h2>
+
+        <p style="
+        margin-top:5px;
+        color:var(--text-muted);
+        font-size:0.9rem;
+        ">
+            ID Usuario: ${p.usuario_id}
+        </p>
+
+    </div>
+
+    <div class="badge">
+        ${p.area.toUpperCase()}
+    </div>
+
+</div>
+
+<div style="line-height:1.9;">
+
+    <p>
+        <i class="fas fa-id-card"
+        style="color:var(--primary);"></i>
+
+        <strong>Cédula:</strong>
+        ${p.cedula}
+    </p>
+
+    <p>
+        <i class="fas fa-envelope"
+        style="color:var(--primary);"></i>
+
+        <strong>Correo:</strong>
+        ${p.correo}
+    </p>
+
+    <p>
+        <i class="fas fa-phone"
+        style="color:var(--primary);"></i>
+
+        <strong>Teléfono:</strong>
+        ${p.telefono}
+    </p>
+
+    <p>
+        <i class="fas fa-tools"
+        style="color:var(--primary);"></i>
+
+        <strong>Oficios:</strong>
+        ${p.oficios}
+    </p>
+
+</div>
+
+<button
+onclick="eliminar(${p.usuario_id})"
+style="
+margin-top:20px;
+background:#c0392b;
+">
+
+    <i class="fas fa-user-slash"></i>
+    Eliminar y bloquear usuario
+
+</button>
+`;
+
+        contenedor.appendChild(card);
+
+    });
+
+}
+
+async function eliminar(id) {
+
+    const motivo = prompt(
+`Motivo de eliminación:
+
+1 - Incumplimiento de trabajo
+2 - Solicitud de adelantos
+3 - Envío de terceros
+4 - Conducta inapropiada
+5 - Documentación falsa
+`
+    );
+
+    if (!motivo) {
+
+        mostrarToast(
+            "Debes indicar un motivo",
+            "warning"
+        );
+
+        return;
+
+    }
+
+    const comentario = prompt(
+        "Comentario adicional (opcional):"
+    );
+
+    const motivos = {
+
+        1: "Incumplimiento de trabajo",
+        2: "Solicitud de adelantos",
+        3: "Envío de terceros",
+        4: "Conducta inapropiada"
+
+    };
+
+    const res = await fetch(`/api/perfil/${id}`, {
+
+        method: 'DELETE',
+
+        headers: {
+            'Content-Type': 'application/json'
+        },
+
+        body: JSON.stringify({
+
+            motivo: motivos[motivo] || motivo,
+            comentario
+
+        })
+
+    });
+
+    if (res.ok) {
+
+        mostrarToast(
+            "Este usuario ha sido eliminado",
+            "warning"
+        );
+
+        cargarUsuarios();
+
+    } else {
+
+        mostrarToast(
+            "Error al eliminar usuario",
+            "error"
+        );
+
+    }
+
+}
+
+cargarUsuarios();
+
+</script>
+
+</body>
+</html>

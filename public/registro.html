@@ -1,38 +1,105 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+  <meta charset="UTF-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Registro de Usuario</title>
+
   <link rel="stylesheet" href="estilos.css">
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
+
 <body>
-  <h2>Formulario de Registro</h2>
-  <form id="registroForm">
-    <label>Nombre:</label><br>
-    <input type="text" name="nombre" required><br><br>
+  <div class="container" style="max-width: 500px;">
+    <div style="width: 50px; height: 5px; background: var(--primary); margin: -20px auto 20px; border-radius: 10px;">
+    </div>
+    <h2 style="margin-top:0;"><i class="fas fa-id-card" style="color: var(--primary);"></i> Registro</h2>
+    <form id="registroForm">
+      <label>Nombre Completo</label>
+      <input type="text" name="nombre" placeholder="Ej: Fiorella Sosa" required>
 
-    <label>Cédula:</label><br>
-    <input type="text" name="cedula" required><br><br>
+      <div style="display: flex; gap: 10px;">
+        <div style="flex:1;">
+          <label>Cédula</label>
+          <input type="text" name="cedula" placeholder="N° Documento" required>
+        </div>
+        <div style="flex:1;">
+          <label>Teléfono</label>
+          <input type="text" name="telefono" placeholder="0981..." required>
+        </div>
+      </div>
 
-    <label>Teléfono:</label><br>
-    <input type="text" name="telefono" required><br><br>
+      <div class="input-group">
 
-    <label>Correo:</label><br>
-    <input type="email" name="correo" required><br><br>
+        <label>Correo Electrónico</label>
 
-    <label>Contraseña:</label><br>
-    <input type="password" name="contraseña" required><br><br>
+        <input type="email" name="correo" placeholder="ejemplo@correo.com" required>
 
-    <button type="submit">Registrar</button>
-  </form>
+        <span class="tooltip-text">
+          Utiliza un correo válido y accesible
+        </span>
 
-  <p id="mensaje"></p>
+      </div>
+      <div class="input-group">
+
+        <label>Contraseña</label>
+
+        <div class="password-wrapper">
+
+          <input type="password" id="reg-password" name="contraseña" placeholder="Mínimo 6 caracteres" required>
+
+          <span class="toggle-password" onclick="togglePassword('reg-password', this)">
+
+            <i class="fas fa-eye"></i>
+
+          </span>
+
+        </div>
+
+        <span class="tooltip-text">
+          Usa una contraseña segura
+        </span>
+
+      </div>
+
+      <div
+        style="display: flex; gap: 12px; align-items: flex-start; margin: 20px 0; background: #f9f9f9; padding: 10px; border-radius: 8px;">
+        <input type="checkbox" id="consentimiento" required style="width: 18px; height: 18px; margin-top: 3px;">
+        <label for="consentimiento"
+          style="margin: 0; font-size: 0.8rem; font-weight: normal; color: var(--text-muted);">
+          Acepto los términos y el tratamiento de mis datos personales para los fines de esta plataforma.
+        </label>
+      </div>
+
+      <button type="submit">Finalizar Registro</button>
+
+    </form>
+    <button class="btn-volver" onclick="window.location.href='index.html'">Regresar</button>
+    <p id="mensaje" style="margin-top: 15px; font-weight: bold; color: var(--primary);"></p>
+  </div>
 
   <script>
+    // FUNCIÓN DEL OJITO: Añadida de forma nativa para que funcione en el formulario de registro
+    function togglePassword(inputId, elementoSpan) {
+      const input = document.getElementById(inputId);
+      const icono = elementoSpan.querySelector('i');
+
+      if (input.type === "password") {
+        input.type = "text";
+        icono.className = "fas fa-eye-slash"; // Cambia al ojo tachado
+      } else {
+        input.type = "password";
+        icono.className = "fas fa-eye"; // Vuelve al ojo normal
+      }
+    }
+
+    // Tu lógica original intacta para el envío de datos a la API de registro
     document.getElementById('registroForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-
       const form = e.target;
       const datos = {
         nombre: form.nombre.value,
@@ -41,22 +108,29 @@
         correo: form.correo.value,
         contraseña: form.contraseña.value
       };
+      try {
+        const respuesta = await fetch('/api/registro', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(datos)
+        });
+        const mensaje = await respuesta.text();
 
-      const respuesta = await fetch('/api/registro', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(datos)
-      });
+        if (respuesta.ok) {
+          mostrarToast(mensaje, "success");
+        } else {
+          mostrarToast(mensaje, "error");
+        }
 
-      const mensaje = await respuesta.text();
-document.getElementById('mensaje').innerText = mensaje;
-
-if (respuesta.ok) {
-  setTimeout(() => {
-    window.location.href = 'index.html'; // o directamente a login.html
-  }, 2000); // espera 2 segundos antes de redirigir
-}
+        if (respuesta.ok) {
+          setTimeout(() => window.location.href = 'login.html', 1500);
+        }
+      } catch (err) {
+        console.error(err);
+      }
     });
   </script>
+  <script src="utils.js"></script>
 </body>
+
 </html>

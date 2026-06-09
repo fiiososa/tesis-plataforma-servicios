@@ -1,49 +1,149 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-  <meta charset="UTF-8" />
-  <title>Iniciar Sesión</title>
-  <link rel="stylesheet" href="estilos.css">
+    <meta charset="UTF-8" />
+    <title>Iniciar Sesión</title>
+    <link rel="stylesheet" href="estilos.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
+
 <body>
-  <h2>Iniciar Sesión</h2>
-  <form id="loginForm">
-    <label>Correo:</label><br>
-    <input type="email" name="correo" required><br><br>
 
-    <label>Contraseña:</label><br>
-    <input type="password" name="contraseña" required><br><br>
+    <div class="container">
 
-    <button type="submit">Ingresar</button>
-  </form>
+        <h2>Iniciar Sesión</h2>
 
-  <p id="mensaje"></p>
+        <form id="loginForm">
 
-  <script>
-    document.getElementById('loginForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const form = e.target;
+            <div class="input-group">
+                <label>Correo:</label>
+                <input
+                    type="email"
+                    name="correo"
+                    required
+                    autocomplete="email"
+                >
+                <span class="tooltip-text">
+                    Ingresa el correo con el que te registraste
+                </span>
+            </div>
 
-      const datos = {
-        correo: form.correo.value,
-        contraseña: form.contraseña.value
-      };
+            <div class="input-group">
+                <label>Contraseña:</label>
+                <div class="password-wrapper">
+                    <input
+                        type="password"
+                        id="login-password"
+                        name="contraseña"
+                        required
+                        autocomplete="current-password"
+                    >
+                    <span
+                        class="toggle-password"
+                        onclick="togglePassword('login-password', this)"
+                    >
+                        <i class="fas fa-eye"></i>
+                    </span>
+                </div>
+                <span class="tooltip-text">
+                    Ingresa tu contraseña segura
+                </span>
+            </div>
 
-      const respuesta = await fetch('/api/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(datos)
-      });
+            <button type="submit">
+                Ingresar
+            </button>
 
-      if (respuesta.ok) {
-        const datosUsuario = await respuesta.json();
-        localStorage.setItem('usuario_id', datosUsuario.usuario.id);
-        window.location.href = 'menu.html';
-      } else {
-        const mensaje = await respuesta.text();
-        document.getElementById('mensaje').innerText = mensaje;
-      }
+        </form>
+
+        <p id="mensaje"></p>
+
+        <button
+            class="btn-volver"
+            onclick="window.location.href='index.html'"
+            style="margin-top:10px;"
+        >
+            Regresar
+        </button>
+
+    </div>
+
+    <script>
+    // FUNCIÓN DEL OJITO: Permite alternar la visibilidad de la contraseña
+    function togglePassword(inputId, elementoSpan) {
+        const input = document.getElementById(inputId);
+        const icono = elementoSpan.querySelector('i');
+        
+        if (input.type === "password") {
+            input.type = "text";
+            icono.className = "fas fa-eye-slash"; // Cambia al ojo tachado
+        } else {
+            input.type = "password";
+            icono.className = "fas fa-eye"; // Vuelve al ojo normal
+        }
+    }
+
+    // Lógica para el envío del formulario de inicio de sesión
+    document.getElementById('loginForm')
+    .addEventListener('submit', async (e) => {
+
+        e.preventDefault();
+
+        const form = e.target;
+
+        const datos = {
+            correo: form.correo.value,
+            contraseña: form.contraseña.value
+        };
+
+        const respuesta = await fetch('/api/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(datos)
+        });
+
+        if (respuesta.ok) {
+            const datosUsuario = await respuesta.json();
+
+            localStorage.setItem('usuario_id', datosUsuario.usuario.id);
+            localStorage.setItem('usuario', JSON.stringify(datosUsuario.usuario));
+
+            mostrarToast("Inicio de sesión exitoso");
+            
+            if (datosUsuario.usuario.rol === 'admin') {
+                window.location.href = 'admin.html';
+            } else {
+                const verificacion = await fetch(`/api/verificar/${datosUsuario.usuario.id}`);
+                const resultado = await verificacion.json();
+
+                // SI NO TIENE PERFIL
+                if (!resultado.tienePerfil) {
+                    alert("Debes crear tu perfil antes de continuar.");
+                    window.location.href = 'perfil.html';
+                }
+                // SI YA TIENE PERFIL
+                else {
+                    window.location.href = 'index.html';
+                }
+            }
+
+        } else {
+            const mensaje = await respuesta.text();
+            
+            // CORRECCIÓN: Si el estatus es 403, significa que el usuario está bloqueado/eliminado
+            if (respuesta.status === 403) {
+                alert(mensaje); // El alert nativo respeta los saltos de línea (\n) del backend perfectamente
+            } else {
+                // Para errores comunes (Contraseña incorrecta, correo no registrado, etc.)
+                mostrarToast(mensaje, "error");
+            }
+        }
     });
-  </script>
+</script>
+
+<script src="utils.js"></script>
 </body>
 </html>
